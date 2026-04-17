@@ -6,6 +6,12 @@ Olvídate de comandos raros o configuraciones complicadas: con unos pocos clics 
 
 ---
 
+## ⬇️ Descargar
+
+👉 [Servidor-Rust-Simple-SCR98.exe](https://github.com/MrSCR98/servidor-rust-simple/releases/download/Ejecutable/Servidor-Rust-Simple-SCR98.exe)
+
+---
+
 ## 🚀 ¿Qué hace esta aplicación?
 
 - Instala SteamCMD automáticamente
