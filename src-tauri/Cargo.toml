@@ -1,0 +1,29 @@
+[package]
+name = "servidor-rust-simple"
+version = "1.0.0"
+description = "Instala o actualiza el servidor de rust de manera facil, pluguins, inicia y apaga."
+authors = ["SCR98"]
+license = ""
+repository = ""
+edition = "2021"
+rust-version = "1.77.2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.5.6", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+tauri = { version = "2.10.3", features = [] }
+tauri-plugin-log = "2"
+tokio = { version = "1.51.1", features = ["time"] }
+tokio-tungstenite = "0.29.0"
+futures-util = "0.3.32"
+url = "2.5.8"
