@@ -1,9 +1,9 @@
 // Importaciones de librerías estándar y externas
+use crate::comun::comando_oculto;
 use futures_util::{SinkExt, StreamExt};
 use serde_json::json;
 use std::env;
 use std::fs;
-use std::i32;
 use std::io::Write;
 use std::path::PathBuf;
 use std::process;
@@ -13,10 +13,6 @@ use tauri::ipc::Channel;
 use tokio::time::{timeout, Duration};
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use url::Url;
-
-// Importación específica para Windows (ocultar ventanas de consola)
-#[cfg(target_os = "windows")]
-use std::os::windows::process::CommandExt;
 
 /// Obtiene la ruta base de la aplicación y concatena una subruta
 /// Ejemplo: obtener_ruta_aplicacion("SERVER") devuelve "C:/ruta/al/ejecutable/RUST SERVER/SERVER"
@@ -44,9 +40,8 @@ async fn descargar_archivo(url_origen: &str, ruta_destino: &PathBuf) -> Result<(
     );
 
     // Ejecutamos PowerShell sin mostrar ventana (creation_flags oculta la consola)
-    let salida_comando = Command::new("powershell")
+    let salida_comando = comando_oculto("powershell")
         .args(&["-Command", &script_powershell])
-        .creation_flags(0x08000000) // FLAG: CREATE_NO_WINDOW (sin ventana visible)
         .output()
         .map_err(|error| format!("Error descargando: {}", error))?;
 
@@ -117,14 +112,13 @@ pub async fn instalar_steam(set_estado: Channel<String>) -> Result<(), String> {
         .unwrap();
 
     // Descomprimimos el ZIP usando la herramienta tar nativa de Windows
-    let resultado_descompresion = Command::new("tar")
+    let resultado_descompresion = comando_oculto("tar")
         .args(&[
             "-xf",
             ruta_archivo_zip.to_str().unwrap(),
             "-C",
             directorio_steam.to_str().unwrap(),
         ])
-        .creation_flags(0x08000000) // Sin ventana visible
         .output()
         .map_err(|error| format!("Error descomprimiendo: {}", error))?;
 
@@ -142,9 +136,8 @@ pub async fn instalar_steam(set_estado: Channel<String>) -> Result<(), String> {
 
     // Ejecutamos SteamCMD una vez para que se actualice e inicialice
     let ruta_ejecutable_steam = directorio_steam.join("steamcmd.exe");
-    let _ = Command::new(&ruta_ejecutable_steam)
+    let _ = comando_oculto(&ruta_ejecutable_steam)
         .arg("+quit")
-        .creation_flags(0x08000000) // Sin ventana visible
         .status()
         .map_err(|error| format!("Error ejecutando: {}", error))?;
 
@@ -203,7 +196,7 @@ pub async fn instalar_rust(set_estado: Channel<String>) -> Result<(), String> {
         .unwrap();
 
     // Ejecutamos SteamCMD para descargar/actualizar Rust (App ID 258550)
-    let mut instancia_proceso = Command::new(&ruta_ejecutable_steam)
+    let mut instancia_proceso = comando_oculto(&ruta_ejecutable_steam)
         .args(&[
             "+login",
             "anonymous",
@@ -216,7 +209,6 @@ pub async fn instalar_rust(set_estado: Channel<String>) -> Result<(), String> {
         ])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .creation_flags(0x08000000) // Sin ventana visible
         .spawn()
         .map_err(|error| format!("Error ejecutando steamcmd: {}", error))?;
 
@@ -270,14 +262,13 @@ pub async fn instalar_oxide(set_estado: Channel<String>) -> Result<(), String> {
         .unwrap();
 
     // Descomprimimos Oxide sobre la carpeta del servidor
-    let resultado_extraccion = Command::new("tar")
+    let resultado_extraccion = comando_oculto("tar")
         .args(&[
             "-xf",
             ruta_archivo_oxide.to_str().unwrap(),
             "-C",
             directorio_servidor.to_str().unwrap(),
         ])
-        .creation_flags(0x08000000) // Sin ventana visible
         .output()
         .map_err(|error| format!("Error descomprimiendo Oxide: {}", error))?;
 
@@ -464,9 +455,8 @@ pub async fn abrir_carpeta_plugins(set_estado: Channel<String>) -> Result<(), St
     let ruta_texto = directorio_plugins.to_str().unwrap();
 
     // Abrimos el explorador de Windows en esa ubicación
-    Command::new("cmd")
+    comando_oculto("cmd")
         .args(&["/C", "start", "", &format!(r#"{}"#, ruta_texto)])
-        .creation_flags(0x08000000) // Sin ventana de consola adicional
         .spawn()
         .map_err(|error| format!("No se pudo abrir el explorador: {}", error))?;
 

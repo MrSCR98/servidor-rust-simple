@@ -1,12 +1,12 @@
 [package]
 name = "servidor-rust-simple"
-version = "1.0.0"
+version = "1.1.0"
 description = "Instala o actualiza el servidor de rust de manera facil, pluguins, inicia y apaga."
 authors = ["SCR98"]
 license = ""
 repository = ""
-edition = "2021"
-rust-version = "1.77.2"
+edition = "2024"
+rust-version = "1.100.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

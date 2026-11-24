@@ -1,4 +1,5 @@
 mod abrir_enlace;
+mod comun;
 mod rust_server_manager;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
