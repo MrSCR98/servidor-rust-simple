@@ -201,3 +201,7 @@ npm run tauri dev
 ```bash
 npm run tauri build
 ```
+
+```bash
+npm run tauri build -- --no-bundle
+```
